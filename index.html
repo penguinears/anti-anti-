@@ -68,4 +68,95 @@ Being an anti-anti-gooner doesn’t mean zero moderation. The goal is enjoyment,
     }
   }
 </script>
-<h2>I came ot this city when it was a city of stone! I left it a city of gooners-Julious Ceaser: I saw I came I gooned</h2>
+
+<!-- YouTube Short Embed -->
+<div style="margin-top:20px;">
+  <h3>HISTORIC GOONERS:</h3>
+  <iframe width="315" height="560"
+          src="https://www.youtube.com/embed/-257tRyW8IY"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+  </iframe>
+</div>
+<!-- Comment System -->
+<div style="margin-top:30px;">
+  <h3>Comments</h3>
+  <div id="commentsContainer" style="border:1px solid #ccc; padding:10px; max-height:300px; overflow-y:auto;"></div>
+
+  <input type="text" id="commentInput" placeholder="Type your comment..." style="width:70%; padding:5px;">
+  <button onclick="postComment()" style="padding:5px 10px;">Post</button>
+</div>
+
+<script>
+  // Load comments from localStorage or empty array
+  let comments = JSON.parse(localStorage.getItem('comments')) || [];
+
+  function saveComments() {
+    localStorage.setItem('comments', JSON.stringify(comments));
+  }
+
+  function renderComments() {
+    const container = document.getElementById('commentsContainer');
+    container.innerHTML = '';
+    
+    comments.forEach((comment, index) => {
+      const div = document.createElement('div');
+      div.style.borderBottom = "1px solid #eee";
+      div.style.padding = "5px 0";
+
+      const text = document.createElement('div');
+      text.textContent = comment.text;
+      div.appendChild(text);
+
+      // Reply button
+      const replyBtn = document.createElement('button');
+      replyBtn.textContent = "Reply";
+      replyBtn.style.marginTop = "5px";
+      replyBtn.style.fontSize = "12px";
+      replyBtn.onclick = () => replyComment(index);
+      div.appendChild(replyBtn);
+
+      // Display replies
+      if(comment.replies && comment.replies.length > 0) {
+        const replyDiv = document.createElement('div');
+        replyDiv.style.marginLeft = "20px";
+        comment.replies.forEach(reply => {
+          const r = document.createElement('div');
+          r.textContent = reply;
+          r.style.padding = "2px 0";
+          replyDiv.appendChild(r);
+        });
+        div.appendChild(replyDiv);
+      }
+
+      container.appendChild(div);
+    });
+  }
+
+  function postComment() {
+    const input = document.getElementById('commentInput');
+    const text = input.value.trim();
+    if(text === "") return alert("Please enter a comment.");
+    
+    comments.push({ text: text, replies: [] });
+    saveComments();
+    renderComments();
+    input.value = "";
+  }
+
+  function replyComment(index) {
+    const replyText = prompt("Enter your reply:");
+    if(replyText && replyText.trim() !== "") {
+      comments[index].replies.push(replyText.trim());
+      saveComments();
+      renderComments();
+    }
+  }
+
+  // Initial render
+  renderComments();
+</script>
+
+    
