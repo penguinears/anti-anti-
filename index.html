@@ -28,28 +28,42 @@ Step 4: Balance (Because Even Heroes Need It)
 
 Being an anti-anti-gooner doesn’t mean zero moderation. The goal is enjoyment, not chaos. Know your limits, keep the humor alive, and don’t let the anti-gooners win.</p>
       
-      
-      
-      
-      <!-- Sign Up Button + List -->
-<button onclick="signUp()">Sign Up Today</button>
+ <button onclick="signUp()">JOIN THE COUSE</button>
 
 <h3>Signed Up:</h3>
 <ul id="nameList"></ul>
 
 <script>
+  // Load names from localStorage
+  let savedNames = JSON.parse(localStorage.getItem("names")) || [];
+
+  const list = document.getElementById("nameList");
+
+  // Display saved names
+  savedNames.forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name;
+    list.appendChild(li);
+  });
+
   function signUp() {
     let name = prompt("Enter your name:");
     if (name && name.trim() !== "") {
-      let list = document.getElementById("nameList");
-      let li = document.createElement("li");
-      li.textContent = name.trim();
+      name = name.trim();
+      savedNames.push(name);
+      localStorage.setItem("names", JSON.stringify(savedNames)); // Save list
+      const li = document.createElement("li");
+      li.textContent = name;
       list.appendChild(li);
     } else {
       alert("Please enter a valid name.");
     }
   }
 </script>
+     
+      
+      
+
 
     }
   }
