@@ -1,204 +1,197 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Hello, World!</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-      <h1 class="title">The Anti Anti Gooners Society! </h1>
-      <h3>We are gonna stand up against anti gooners</h3
-      <h6>The dev doesnt goon btw</h6>
-      <p>Why Anti-Anti-Gooners Are Winning
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Anti Anti Gooners Society!</title>
+  <meta name="description" content="A community for Anti-Anti-Gooners to share, sign up, vote, and comment.">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      background-color: #f9f9f9;
+    }
 
-For too long, gooners have been unfairly shamed. Everywhere you look, someone is telling them to “stop,” “quit,” or “get a life.” Well… we’re here to say: enough. Anti-anti-gooners rise!
+    h1, h3 {
+      text-align: center;
+    }
 
-Step 1: Own Your Hobby
+    p {
+      margin-bottom: 15px;
+    }
 
-Gooning isn’t a crime. It’s a way of life, a dedicated focus, a… very committed hobby. If someone wants to judge, let them. Anti-anti-gooners know that passion is nothing to be ashamed of.
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
 
-Step 2: Laugh at the Haters
+    button:hover {
+      transform: scale(1.05);
+      transition: transform 0.2s;
+    }
 
-Anti-anti-gooners have a sense of humor. Yes, your habits might seem intense to outsiders—but life is short, and self-awareness + memes are a winning combo.
+    #commentsContainer {
+      border: 1px solid #ccc;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      background-color: #fff;
+      margin-bottom: 10px;
+    }
 
-Step 3: Community Matters
+    input[type="text"] {
+      width: 70%;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
 
-The beauty of being a gooner is the community. Sharing tips, strategies, or just vibing together online—it’s connection, not a curse. Anti-anti-gooners support each other, unapologetically.
+  <h1 class="title">The Anti Anti Gooners Society!</h1>
+  <h3>We are gonna stand up against anti-gooners</h3>
+  <h6>The dev doesn't goon btw</h6>
 
-Step 4: Balance (Because Even Heroes Need It)
+  <!-- Article -->
+  <p>For too long, gooners have been unfairly shamed. Everywhere you look, someone is telling them to “stop,” “quit,” or “get a life.” Well… we’re here to say: enough. Anti-anti-gooners rise!</p>
 
-Being an anti-anti-gooner doesn’t mean zero moderation. The goal is enjoyment, not chaos. Know your limits, keep the humor alive, and don’t let the anti-gooners win.</p>
-      
- <button onclick="signUp()">JOIN THE COUSE</button>
+  <p><strong>Step 1: Own Your Hobby</strong><br>
+  Gooning isn’t a crime. It’s a way of life, a dedicated focus, a very committed hobby. If someone wants to judge, let them. Anti-anti-gooners know that passion is nothing to be ashamed of.</p>
 
-<h3>Signed Up:</h3>
-<ul id="nameList"></ul>
+  <p><strong>Step 2: Laugh at the Haters</strong><br>
+  Anti-anti-gooners have a sense of humor. Yes, your habits might seem intense to outsiders—but life is short, and self-awareness + memes are a winning combo.</p>
 
-<script>
-  // Load names from localStorage
-  let savedNames = JSON.parse(localStorage.getItem("names")) || [];
+  <p><strong>Step 3: Community Matters</strong><br>
+  The beauty of being a gooner is the community. Sharing tips, strategies, or just vibing together online—it’s connection, not a curse. Anti-anti-gooners support each other, unapologetically.</p>
 
-  const list = document.getElementById("nameList");
+  <p><strong>Step 4: Balance (Because Even Heroes Need It)</strong><br>
+  Being an anti-anti-gooner doesn’t mean zero moderation. The goal is enjoyment, not chaos. Know your limits, keep the humor alive, and don’t let the anti-gooners win.</p>
 
-  // Display saved names
-  savedNames.forEach(name => {
-    const li = document.createElement("li");
-    li.textContent = name;
-    list.appendChild(li);
-  });
+  <!-- Sign-up Section -->
+  <button onclick="signUp()">JOIN THE COURSE</button>
+  <h3>Signed Up:</h3>
+  <ul id="nameList"></ul>
 
-  function signUp() {
-    let name = prompt("Enter your name:");
-    if (name && name.trim() !== "") {
-      name = name.trim();
-      savedNames.push(name);
-      localStorage.setItem("names", JSON.stringify(savedNames)); // Save list
+  <!-- Poll Section -->
+  <h3>Anti-Anti-Gooner Poll</h3>
+  <p>Do you goon?</p>
+  <button onclick="vote('goon')">Goon 😎</button>
+  <button onclick="vote('not')">Not to Goon 🙅</button>
+  <p id="results">Goon: 0 | Not to Goon: 0</p>
+
+  <!-- YouTube Embed -->
+  <div style="margin-top:20px;">
+    <h3>HISTORIC GOONERS:</h3>
+    <iframe width="315" height="560"
+            src="https://www.youtube.com/embed/-257tRyW8IY"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+    </iframe>
+  </div>
+
+  <!-- Comments Section -->
+  <div style="margin-top:30px;">
+    <h3>Comments</h3>
+    <div id="commentsContainer"></div>
+    <input type="text" id="commentInput" placeholder="Type your comment...">
+    <button onclick="postComment()">Post</button>
+  </div>
+
+  <h1>THERE IS NO DATABASE SO OTHER PEOPLE CAN'T SEE SIGNATURES OR COMMENTS BUG I CAN. IT'S IN DEVELOPMENT.</h1>
+
+  <script>
+    // -------------------
+    // Sign-up (localStorage)
+    // -------------------
+    let savedNames = JSON.parse(localStorage.getItem("names")) || [];
+    const list = document.getElementById("nameList");
+    savedNames.forEach(name => {
       const li = document.createElement("li");
       li.textContent = name;
       list.appendChild(li);
-    } else {
-      alert("Please enter a valid name.");
-    }
-  }
-</script>
-     
-      
-      
-
-
-    }
-  }
-</script>
-
-<!-- YouTube Short Embed -->
-<div style="margin-top:20px;">
-  <h3>HISTORIC GOONERS:</h3>
-  <iframe width="315" height="560"
-          src="https://www.youtube.com/embed/-257tRyW8IY"
-          title="YouTube video player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen>
-  </iframe>
-</div>
-<h3>Anti-Anti-Gooner Poll</h3>
-<p>Do you goon?</p>
-
-<button onclick="vote('goon')">Goon 😎</button>
-<button onclick="vote('not')">Not to Goon 🙅</button>
-
-<p id="results">Goon: 0 | Not to Goon: 0</p>
-
-<script>
-let votes = {
-  goon: 0,
-  not: 0
-};
-
-function vote(option) {
-  if (option === 'goon') votes.goon++;
-  if (option === 'not') votes.not++;
-
-  document.getElementById('results').textContent = 
-    `Goon: ${votes.goon} | Not to Goon: ${votes.not}`;
-}
-</script>
-
-<style>
-button {
-  margin: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-button:hover {
-  transform: scale(1.1);
-  transition: transform 0.2s;
-}
-</style>
-
-    
-    
-    
-    <!-- Comment System -->
-<div style="margin-top:30px;">
-  <h3>Comments</h3>
-  <div id="commentsContainer" style="border:1px solid #ccc; padding:10px; max-height:300px; overflow-y:auto;"></div>
-
-  <input type="text" id="commentInput" placeholder="Type your comment..." style="width:70%; padding:5px;">
-  <button onclick="postComment()" style="padding:5px 10px;">Post</button>
-</div>
-
-<script>
-  // Load comments from localStorage or empty array
-  let comments = JSON.parse(localStorage.getItem('comments')) || [];
-
-  function saveComments() {
-    localStorage.setItem('comments', JSON.stringify(comments));
-  }
-
-  function renderComments() {
-    const container = document.getElementById('commentsContainer');
-    container.innerHTML = '';
-    
-    comments.forEach((comment, index) => {
-      const div = document.createElement('div');
-      div.style.borderBottom = "1px solid #eee";
-      div.style.padding = "5px 0";
-
-      const text = document.createElement('div');
-      text.textContent = comment.text;
-      div.appendChild(text);
-
-      // Reply button
-      const replyBtn = document.createElement('button');
-      replyBtn.textContent = "Reply";
-      replyBtn.style.marginTop = "5px";
-      replyBtn.style.fontSize = "12px";
-      replyBtn.onclick = () => replyComment(index);
-      div.appendChild(replyBtn);
-
-      // Display replies
-      if(comment.replies && comment.replies.length > 0) {
-        const replyDiv = document.createElement('div');
-        replyDiv.style.marginLeft = "20px";
-        comment.replies.forEach(reply => {
-          const r = document.createElement('div');
-          r.textContent = reply;
-          r.style.padding = "2px 0";
-          replyDiv.appendChild(r);
-        });
-        div.appendChild(replyDiv);
-      }
-
-      container.appendChild(div);
     });
-  }
 
-  function postComment() {
-    const input = document.getElementById('commentInput');
-    const text = input.value.trim();
-    if(text === "") return alert("Please enter a comment.");
-    
-    comments.push({ text: text, replies: [] });
-    saveComments();
-    renderComments();
-    input.value = "";
-  }
-
-  function replyComment(index) {
-    const replyText = prompt("Enter your reply:");
-    if(replyText && replyText.trim() !== "") {
-      comments[index].replies.push(replyText.trim());
-      saveComments();
-      renderComments();
+    function signUp() {
+      let name = prompt("Enter your name:");
+      if (name && name.trim() !== "") {
+        name = name.trim();
+        savedNames.push(name);
+        localStorage.setItem("names", JSON.stringify(savedNames));
+        const li = document.createElement("li");
+        li.textContent = name;
+        list.appendChild(li);
+      } else {
+        alert("Please enter a valid name.");
+      }
     }
-  }
 
-  // Initial render
-  renderComments();
-</script>
-<h1>THERE IS N DATABACE SO OTHER PEOPLE CANT SEE SIGNITURES OR COMMENTS BUG I CAN ITS IN DEVELOPMENT</h1>
+    // -------------------
+    // Poll
+    // -------------------
+    let votes = { goon: 0, not: 0 };
+    function vote(option) {
+      if (option === 'goon') votes.goon++;
+      if (option === 'not') votes.not++;
+      document.getElementById('results').textContent = 
+        `Goon: ${votes.goon} | Not to Goon: ${votes.not}`;
+    }
+
+    // -------------------
+    // Firebase Comments (Multi-device)
+    // -------------------
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const commentInput = document.getElementById('commentInput');
+    const commentsContainer = document.getElementById('commentsContainer');
+
+    function postComment() {
+      const text = commentInput.value.trim();
+      if(!text) return alert("Please enter a comment.");
+      const newCommentRef = db.ref('comments').push();
+      newCommentRef.set({ text: text, timestamp: Date.now() });
+      commentInput.value = "";
+    }
+
+    db.ref('comments').on('value', snapshot => {
+      commentsContainer.innerHTML = '';
+      const data = snapshot.val();
+      if(data){
+        Object.values(data).forEach(comment => {
+          const div = document.createElement('div');
+          div.textContent = comment.text;
+          div.style.borderBottom = "1px solid #eee";
+          div.style.padding = "5px 0";
+          commentsContainer.appendChild(div);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+
 
     
