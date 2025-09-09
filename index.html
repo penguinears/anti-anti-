@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>The Anti Anti Gooners Society!</title>
-  <meta name="description" content="Community for Anti-Anti-Gooners">
+  <meta name="description" content="Community for Anti-Anti-Gooners with sign-ups, comments, poll, and YouTube Shorts">
+  
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -53,6 +56,23 @@
 <body>
 
 <h1>The Anti Anti Gooners Society!</h1>
+<h3>We are gonna stand up against anti-gooners</h3>
+<h6>The dev doesn't goon btw</h6>
+
+<!-- Article -->
+<p>For too long, gooners have been unfairly shamed. Everywhere you look, someone is telling them to “stop,” “quit,” or “get a life.” Well… we’re here to say: enough. Anti-anti-gooners rise!</p>
+
+<p><strong>Step 1: Own Your Hobby</strong><br>
+Gooning isn’t a crime. It’s a way of life, a dedicated focus, a very committed hobby. If someone wants to judge, let them. Anti-anti-gooners know that passion is nothing to be ashamed of.</p>
+
+<p><strong>Step 2: Laugh at the Haters</strong><br>
+Anti-anti-gooners have a sense of humor. Yes, your habits might seem intense to outsiders—but life is short, and self-awareness + memes are a winning combo.</p>
+
+<p><strong>Step 3: Community Matters</strong><br>
+The beauty of being a gooner is the community. Sharing tips, strategies, or just vibing together online—it’s connection, not a curse. Anti-anti-gooners support each other, unapologetically.</p>
+
+<p><strong>Step 4: Balance (Because Even Heroes Need It)</strong><br>
+Being an anti-anti-gooner doesn’t mean zero moderation. The goal is enjoyment, not chaos. Know your limits, keep the humor alive, and don’t let the anti-gooners win.</p>
 
 <!-- Sign-up Section -->
 <button onclick="signUp()">JOIN THE COURSE</button>
@@ -61,17 +81,65 @@
   <li>No sign-ups yet.</li>
 </ul>
 
-<!-- Comments Section -->
-<h3>Comments</h3>
-<ul id="commentsList">
-  <li>No comments yet.</li>
-</ul>
-<input type="text" id="commentInput" placeholder="Type your comment...">
-<button onclick="postComment()">Post</button>
+<!-- Poll Section -->
+<h3>Anti-Anti-Gooner Poll</h3>
+<p>Do you goon?</p>
+<button onclick="vote('goon')">Goon 😎</button>
+<button onclick="vote('not')">Not to Goon 🙅</button>
+<p id="results">Goon: 0 | Not to Goon: 0</p>
 
-<!-- Firebase Initialization -->
+<!-- YouTube Shorts Scrollable Section -->
+<div style="margin-top:20px;">
+  <h3 style="text-align:center;">HISTORIC GOONERS - Shorts</h3>
+  <div class="shorts-container">
+    <iframe width="315" height="560"
+            src="https://www.youtube.com/embed/p9iJTHzzAdo"
+            title="Short 1"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+
+    <iframe width="315" height="560"
+            src="https://www.youtube.com/embed/ZSy3N7vkghI"
+            title="Short 2"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+
+    <iframe width="315" height="560"
+            src="https://www.youtube.com/embed/im3cAHjy_ms"
+            title="Short 3"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- Comments Section -->
+<div style="margin-top:30px;">
+  <h3>Comments</h3>
+  <ul id="commentsList">
+    <li>No comments yet.</li>
+  </ul>
+  <input type="text" id="commentInput" placeholder="Type your comment...">
+  <button onclick="postComment()">Post</button>
+</div>
+
 <script>
-  // Replace these with your Firebase project info
+  // -------------------
+  // Poll
+  // -------------------
+  let votes = { goon: 0, not: 0 };
+  function vote(option) {
+    if (option === 'goon') votes.goon++;
+    if (option === 'not') votes.not++;
+    document.getElementById('results').textContent = 
+      `Goon: ${votes.goon} | Not to Goon: ${votes.not}`;
+  }
+
+  // -------------------
+  // Firebase Setup
+  // -------------------
   const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -89,7 +157,7 @@
   const commentsList = document.getElementById('commentsList');
   const commentInput = document.getElementById('commentInput');
 
-  // --- Sign-up ---
+  // ----- Sign-ups -----
   function signUp() {
     const name = prompt("Enter your name:").trim();
     if(!name) return alert("Enter a valid name.");
@@ -112,7 +180,7 @@
     }
   });
 
-  // --- Comments ---
+  // ----- Comments -----
   function postComment() {
     const text = commentInput.value.trim();
     if(!text) return alert("Enter a comment.");
