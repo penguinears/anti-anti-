@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <title>The Anti Anti Gooners Society!</title>
   <meta name="description" content="A community for Anti-Anti-Gooners to share, sign up, vote, and comment.">
-  <link rel="stylesheet" href="styles.css">
+  
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -17,15 +18,12 @@
       margin: auto;
       background-color: #f9f9f9;
     }
-
     h1, h3 {
       text-align: center;
     }
-
     p {
       margin-bottom: 15px;
     }
-
     button {
       margin: 5px;
       padding: 10px 20px;
@@ -36,12 +34,10 @@
       color: white;
       border: none;
     }
-
     button:hover {
       transform: scale(1.05);
       transition: transform 0.2s;
     }
-
     #commentsContainer {
       border: 1px solid #ccc;
       padding: 10px;
@@ -50,10 +46,18 @@
       background-color: #fff;
       margin-bottom: 10px;
     }
-
     input[type="text"] {
       width: 70%;
       padding: 5px;
+    }
+    /* Scrollable YouTube Shorts */
+    .shorts-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      padding: 10px 0;
+      scrollbar-width: thin;
+      scrollbar-color: #007bff #ccc;
     }
   </style>
 </head>
@@ -90,43 +94,32 @@
   <button onclick="vote('not')">Not to Goon 🙅</button>
   <p id="results">Goon: 0 | Not to Goon: 0</p>
 
- <!-- YouTube Shorts Scrollable Section -->
-<div style="margin-top:20px;">
-  <h3 style="text-align:center;">HISTORIC GOONERS - Shorts</h3>
-  <div style="
-      display: flex;
-      overflow-x: auto;
-      gap: 10px;
-      padding: 10px 0;
-      scrollbar-width: thin;
-      scrollbar-color: #007bff #ccc;
-  ">
-    <iframe width="315" height="560"
-            src="https://www.youtube.com/embed/p9iJTHzzAdo"
-            title="Short 1"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen>
-    </iframe>
+  <!-- YouTube Shorts Scrollable Section -->
+  <div style="margin-top:20px;">
+    <h3 style="text-align:center;">HISTORIC GOONERS - Shorts</h3>
+    <div class="shorts-container">
+      <iframe width="315" height="560"
+              src="https://www.youtube.com/embed/p9iJTHzzAdo"
+              title="Short 1"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
 
-    <iframe width="315" height="560"
-            src="https://www.youtube.com/embed/ZSy3N7vkghI"
-            title="Short 2"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen>
-    </iframe>
+      <iframe width="315" height="560"
+              src="https://www.youtube.com/embed/ZSy3N7vkghI"
+              title="Short 2"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
 
-    <iframe width="315" height="560"
-            src="https://www.youtube.com/embed/im3cAHjy_ms"
-            title="Short 3"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen>
-    </iframe>
+      <iframe width="315" height="560"
+              src="https://www.youtube.com/embed/im3cAHjy_ms"
+              title="Short 3"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+    </div>
   </div>
-</div>
-
 
   <!-- Comments Section -->
   <div style="margin-top:30px;">
@@ -135,33 +128,10 @@
     <input type="text" id="commentInput" placeholder="Type your comment...">
     <button onclick="postComment()">Post</button>
   </div>
-  
+
+  <h1>THERE IS NO DATABASE SO OTHER PEOPLE CAN'T SEE SIGNATURES OR COMMENTS BUG I CAN. IT'S IN DEVELOPMENT.</h1>
+
   <script>
-    // -------------------
-    // Sign-up (localStorage)
-    // -------------------
-    let savedNames = JSON.parse(localStorage.getItem("names")) || [];
-    const list = document.getElementById("nameList");
-    savedNames.forEach(name => {
-      const li = document.createElement("li");
-      li.textContent = name;
-      list.appendChild(li);
-    });
-
-    function signUp() {
-      let name = prompt("Enter your name:");
-      if (name && name.trim() !== "") {
-        name = name.trim();
-        savedNames.push(name);
-        localStorage.setItem("names", JSON.stringify(savedNames));
-        const li = document.createElement("li");
-        li.textContent = name;
-        list.appendChild(li);
-      } else {
-        alert("Please enter a valid name.");
-      }
-    }
-
     // -------------------
     // Poll
     // -------------------
@@ -174,7 +144,7 @@
     }
 
     // -------------------
-    // Firebase Comments (Multi-device)
+    // Firebase Sign-ups and Comments
     // -------------------
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
@@ -189,6 +159,28 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // ----- Sign-ups -----
+    const nameList = document.getElementById('nameList');
+
+    db.ref('signups').on('value', snapshot => {
+      nameList.innerHTML = '';
+      const data = snapshot.val();
+      if(data){
+        Object.values(data).forEach(name => {
+          const li = document.createElement('li');
+          li.textContent = name;
+          nameList.appendChild(li);
+        });
+      }
+    });
+
+    function signUp() {
+      let name = prompt("Enter your name:").trim();
+      if(!name) return alert("Please enter a valid name.");
+      db.ref('signups').push(name);
+    }
+
+    // ----- Comments -----
     const commentInput = document.getElementById('commentInput');
     const commentsContainer = document.getElementById('commentsContainer');
 
@@ -216,6 +208,5 @@
   </script>
 </body>
 </html>
-
 
     
