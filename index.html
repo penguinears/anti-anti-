@@ -6,21 +6,22 @@
   <meta name="description" content="Community for Anti-Anti-Gooners with sign-ups, comments, poll, and YouTube Shorts">
 
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: auto; padding: 20px; background: #f9f9f9; }
-    h1,h3 { text-align: center; }
-    button { margin: 5px; padding: 8px 15px; cursor: pointer; border-radius: 5px; background-color: #007bff; color: white; border: none; font-size: 14px; }
-    button:hover { transform: scale(1.05); transition: 0.2s; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: auto; padding: 20px; background: #121212; color: #f0f0f0; }
+    h1,h3 { text-align: center; color: #ffffff; }
+    button { margin: 5px; padding: 8px 15px; cursor: pointer; border-radius: 5px; background-color: #1e88e5; color: white; border: none; font-size: 14px; }
+    button:hover { transform: scale(1.05); transition: 0.2s; background-color: #1565c0; }
     ul { list-style: none; padding-left: 0; }
-    li { margin: 5px 0; }
+    li { margin: 5px 0; padding: 6px; background: #1e1e1e; border-radius: 5px; }
     #banner { position: fixed; top: 0; left: 0; width: 100%; background: #ffcc00; color: black; text-align: center; padding: 10px; font-size: 16px; z-index: 1000; }
-    #banner button { margin-left: 10px; }
-    .comment-box { border: 1px solid #ddd; padding: 10px; margin: 8px 0; background: #fff; border-radius: 6px; }
+    #banner button { margin-left: 10px; background:#333; color:white; }
+    .comment-box { border: 1px solid #333; padding: 10px; margin: 8px 0; background: #1c1c1c; border-radius: 6px; }
     .comment-meta { font-size: 12px; color: gray; margin-bottom: 5px; }
-    .reply-box { margin-left: 20px; border-left: 2px solid #ccc; padding-left: 10px; }
+    .reply-box { margin-left: 20px; border-left: 2px solid #555; padding-left: 10px; }
     .comment-input { display: flex; gap: 10px; margin-top: 10px; }
-    .comment-input input { flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
-    .fact-box { background: #f0f8ff; padding: 10px; border-radius: 5px; margin: 10px 0; border: 1px solid #ddd; }
+    .comment-input input { flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #444; background:#222; color:white; }
     canvas { position: fixed; pointer-events: none; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; }
+    .wall-section { border:1px solid #333; padding:10px; margin:10px 0; border-radius:6px; }
+    .wall-section h3 { margin-top:0; }
   </style>
 </head>
 <body>
@@ -50,14 +51,14 @@
 <div style="margin-top:30px;">
   <h3>Community Walls</h3>
   
-  <button onclick="toggleWall('goonersWall')">📜 Open Gooners Wall</button>
-  <div id="goonersWall" style="display:none; border:1px solid #ddd; padding:10px; margin:10px 0; background:#fff;">
-    <h3>Gooners Wall</h3>
-    <div id="goonerFacts" class="fact-box">Loading gooner fact...</div>
+  <button onclick="toggleWall('goonersWall')">📜 Open Gooners Wall (Update Log)</button>
+  <div id="goonersWall" class="wall-section" style="display:none;">
+    <h3>Update Log</h3>
+    <ul id="updateList"></ul>
   </div>
 
   <button onclick="toggleWall('shameWall')">🚫 Open Anti Anti-Gooners Wall of Shame</button>
-  <div id="shameWall" style="display:none; border:1px solid #ddd; padding:10px; margin:10px 0; background:#ffe6e6;">
+  <div id="shameWall" class="wall-section" style="display:none; background:#2a1c1c;">
     <h3>Anti Anti-Gooners Wall of Shame</h3>
     <p>No one shamed yet...</p>
   </div>
@@ -129,18 +130,12 @@
   const commentInput = document.getElementById('commentInput');
   const commentsList = document.getElementById('commentsList');
   let comments = JSON.parse(localStorage.getItem('comments')) || [];
-
   renderComments();
 
   function postComment() {
     const text = commentInput.value.trim();
     if(!text) return alert("Enter a comment.");
-    const comment = {
-      nickname,
-      text,
-      time: new Date().toLocaleString(),
-      replies: []
-    };
+    const comment = { nickname, text, time: new Date().toLocaleString(), replies: [] };
     comments.push(comment);
     localStorage.setItem('comments', JSON.stringify(comments));
     commentInput.value = '';
@@ -179,37 +174,33 @@
   function replyTo(index) {
     const reply = prompt("Write your reply:");
     if(!reply) return;
-    comments[index].replies.push({
-      nickname,
-      text: reply,
-      time: new Date().toLocaleString(),
-      replies: []
-    });
+    comments[index].replies.push({ nickname, text: reply, time: new Date().toLocaleString(), replies: [] });
     localStorage.setItem('comments', JSON.stringify(comments));
     renderComments();
   }
+
+  // Update Log (controlled via code)
+  const updates = [
+    { version: "v1.0", text: "Site launched with dark theme and update log.", date: "2025-09-13" },
+    { version: "v1.1", text: "Comments section improved, nicknames added.", date: "2025-09-14" },
+    { version: "v1.2", text: "Gooners Wall now shows update log only.", date: "2025-09-15" }
+  ];
+
+  function renderUpdates() {
+    const list = document.getElementById('updateList');
+    list.innerHTML = '';
+    updates.forEach(u => {
+      const li = document.createElement('li');
+      li.innerHTML = `<b>${u.version}</b> (${u.date}): ${u.text}`;
+      list.appendChild(li);
+    });
+  }
+  renderUpdates();
 
   // Toggle Walls
   function toggleWall(id) {
     const el = document.getElementById(id);
     el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
-    if(id === "goonersWall" && el.style.display === "block") {
-      showRandomFact();
-    }
-  }
-
-  // Gooner Facts
-  const goonerFacts = [
-    "Fact 1: A true gooner never forgets the mission.",
-    "Fact 2: Gooning hours are infinite.",
-    "Fact 3: Anti-gooners fear the wall.",
-    "Fact 4: A gooner’s spirit lives forever.",
-    "Fact 5: You can’t stop a gooner, only join them."
-  ];
-  function showRandomFact() {
-    const factBox = document.getElementById("goonerFacts");
-    const fact = goonerFacts[Math.floor(Math.random()*goonerFacts.length)];
-    factBox.textContent = fact;
   }
 
   // Confetti
@@ -252,3 +243,4 @@
 
 </body>
 </html>
+
