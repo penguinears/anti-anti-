@@ -9,13 +9,17 @@
     body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: auto; padding: 20px; background: #f9f9f9; }
     h1,h3 { text-align: center; }
     p { margin-bottom: 15px; }
-    button { margin: 5px; padding: 10px 20px; cursor: pointer; border-radius: 5px; background-color: #007bff; color: white; border: none; }
+    button { margin: 5px; padding: 8px 15px; cursor: pointer; border-radius: 5px; background-color: #007bff; color: white; border: none; font-size: 14px; }
     button:hover { transform: scale(1.05); transition: 0.2s; }
     ul { list-style: none; padding-left: 0; }
-    li { border-bottom: 1px solid #eee; padding: 5px 0; }
+    li { margin: 5px 0; }
     .shorts-container { display: flex; overflow-x: auto; gap: 10px; padding: 10px 0; }
     #banner { position: fixed; top: 0; left: 0; width: 100%; background: #ffcc00; color: black; text-align: center; padding: 10px; font-size: 16px; z-index: 1000; }
     #banner button { margin-left: 10px; }
+    .comment-box { border: 1px solid #ddd; padding: 10px; margin: 5px 0; background: #fff; border-radius: 5px; }
+    .reply-box { margin-left: 20px; border-left: 2px solid #ccc; padding-left: 10px; }
+    .comment-meta { font-size: 12px; color: gray; margin-bottom: 5px; }
+    .fact-box { background: #f0f8ff; padding: 10px; border-radius: 5px; margin: 10px 0; border: 1px solid #ddd; }
     canvas { position: fixed; pointer-events: none; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; }
   </style>
 </head>
@@ -64,7 +68,7 @@
   <button onclick="toggleWall('goonersWall')">📜 Open Gooners Wall</button>
   <div id="goonersWall" style="display:none; border:1px solid #ddd; padding:10px; margin:10px 0; background:#fff;">
     <h3>Gooners Wall</h3>
-    <p>No announcements.</p>
+    <div id="goonerFacts" class="fact-box">Loading gooner fact...</div>
   </div>
 
   <!-- Anti-Anti-Gooners Wall of Shame -->
@@ -78,9 +82,10 @@
 <!-- Comments Section -->
 <div style="margin-top:30px;">
   <h3>Comments</h3>
-  <ul id="commentsList"><li>No comments yet.</li></ul>
+  <input type="text" id="nicknameInput" placeholder="Enter your nickname">
   <input type="text" id="commentInput" placeholder="Type your comment...">
   <button onclick="postComment()">Post</button>
+  <div id="commentsList"><p>No comments yet.</p></div>
 </div>
 
 <!-- Music -->
@@ -104,6 +109,7 @@
   const nameList = document.getElementById('nameList');
   const commentsList = document.getElementById('commentsList');
   const commentInput = document.getElementById('commentInput');
+  const nicknameInput = document.getElementById('nicknameInput');
 
   let signups = JSON.parse(localStorage.getItem('signups')) || [];
   let comments = JSON.parse(localStorage.getItem('comments')) || [];
@@ -133,10 +139,24 @@
     }
   }
 
-  function postComment() {
+  function postComment(parentIndex=null) {
     const text = commentInput.value.trim();
+    const nick = nicknameInput.value.trim() || "Anon";
     if(!text) return alert("Enter a comment.");
-    comments.push(text);
+
+    const comment = {
+      nickname: nick,
+      text,
+      time: new Date().toLocaleString(),
+      replies: []
+    };
+
+    if(parentIndex !== null) {
+      comments[parentIndex].replies.push(comment);
+    } else {
+      comments.push(comment);
+    }
+
     localStorage.setItem('comments', JSON.stringify(comments));
     renderComments();
     commentInput.value = '';
@@ -146,20 +166,66 @@
   function renderComments() {
     commentsList.innerHTML = '';
     if(comments.length){
-      comments.forEach(text => {
-        const li = document.createElement('li');
-        li.textContent = text;
-        commentsList.appendChild(li);
+      comments.forEach((c, i) => {
+        const div = renderComment(c, i);
+        commentsList.appendChild(div);
       });
     } else {
-      commentsList.innerHTML = '<li>No comments yet.</li>';
+      commentsList.innerHTML = '<p>No comments yet.</p>';
     }
+  }
+
+  function renderComment(c, index, isReply=false) {
+    const div = document.createElement('div');
+    div.className = "comment-box" + (isReply ? " reply-box" : "");
+    div.innerHTML = `
+      <div class="comment-meta"><b>${c.nickname}</b> • ${c.time}</div>
+      <div>${c.text}</div>
+      <button onclick="replyTo(${index})">Reply</button>
+    `;
+    if(c.replies.length){
+      c.replies.forEach(r => {
+        div.appendChild(renderComment(r, index, true));
+      });
+    }
+    return div;
+  }
+
+  function replyTo(index) {
+    const reply = prompt("Write your reply:");
+    const nick = nicknameInput.value.trim() || "Anon";
+    if(!reply) return;
+    comments[index].replies.push({
+      nickname: nick,
+      text: reply,
+      time: new Date().toLocaleString(),
+      replies: []
+    });
+    localStorage.setItem('comments', JSON.stringify(comments));
+    renderComments();
   }
 
   // Toggle Walls
   function toggleWall(id) {
     const el = document.getElementById(id);
     el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
+    if(id === "goonersWall" && el.style.display === "block") {
+      showRandomFact();
+    }
+  }
+
+  // Gooner Facts
+  const goonerFacts = [
+    "Fact 1: A true gooner never forgets the mission.",
+    "Fact 2: Gooning hours are infinite.",
+    "Fact 3: Anti-gooners fear the wall.",
+    "Fact 4: A gooner’s spirit lives forever.",
+    "Fact 5: You can’t stop a gooner, only join them."
+  ];
+  function showRandomFact() {
+    const factBox = document.getElementById("goonerFacts");
+    const fact = goonerFacts[Math.floor(Math.random()*goonerFacts.length)];
+    factBox.textContent = fact;
   }
 
   // Simple confetti animation
