@@ -1,21 +1,113 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anti Anti-Gooners</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import confetti from "https://cdn.skypack.dev/canvas-confetti";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCkUseB306TS1rllpinIKwcdFW6IyDJ2Zc",
-  authDomain: "antiantigoonerssociety.firebaseapp.com",
-  projectId: "antiantigoonerssociety",
-  storageBucket: "antiantigoonerssociety.firebasestorage.app",
-  messagingSenderId: "749386187473",
-  appId: "1:749386187473:web:07b36a0d50550dc3913bf0",
-  measurementId: "G-D1E7ZV4VBX"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkUseB306TS1rllpinIKwcdFW6IyDJ2Zc",
+      authDomain: "antiantigoonerssociety.firebaseapp.com",
+      projectId: "antiantigoonerssociety",
+      storageBucket: "antiantigoonerssociety.firebasestorage.app",
+      messagingSenderId: "749386187473",
+      appId: "1:749386187473:web:07b36a0d50550dc3913bf0",
+      measurementId: "G-D1E7ZV4VBX"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
+    window.signUp = function () {
+      const name = prompt("Enter your name:");
+      if (name) {
+        push(ref(db, "signups"), name);
+        confetti();
+      }
+    }
+
+    onValue(ref(db, "signups"), snapshot => {
+      const listDiv = document.getElementById("signup-list");
+      listDiv.innerHTML = "<h3>Signed Up:</h3>";
+      snapshot.forEach(child => {
+        listDiv.innerHTML += `<div class='list-item'>• ${child.val()}</div>`;
+      });
+    });
+
+    window.toggleWall = function () {
+      const wall = document.getElementById("wall");
+      wall.style.display = wall.style.display === "block" ? "none" : "block";
+    }
+
+    window.toggleLog = function () {
+      const log = document.getElementById("log");
+      log.style.display = log.style.display === "block" ? "none" : "block";
+    }
+
+    window.postComment = function () {
+      const input = document.getElementById("commentInput");
+      const text = input.value.trim();
+      if (text) {
+        push(ref(db, "comments"), { text });
+        input.value = "";
+      }
+    }
+
+    onValue(ref(db, "comments"), snapshot => {
+      const list = document.getElementById("commentList");
+      list.innerHTML = "";
+      snapshot.forEach(child => {
+        const c = child.val();
+        list.innerHTML += `<div class='comment'>${c.text}</div>`;
+      });
+    });
+  </script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #ffdde1, #ee9ca7); margin: 0; padding: 0; color: #333; }
+    header { background: #8b0000; color: white; padding: 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
+    header h1 { margin: 0; font-size: 2.5em; }
+    main { max-width: 900px; margin: 20px auto; padding: 20px; background: white; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    p { font-size: 1.2em; line-height: 1.6; margin-bottom: 20px; }
+    button { margin: 10px; padding: 12px 24px; border: none; border-radius: 12px; background: #8b0000; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    button:hover { background: #b22222; transform: scale(1.05); }
+    #signup-list { margin: 20px auto; padding: 15px; background: #fafafa; border-radius: 12px; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); text-align: left; }
+    #signup-list h3 { margin-top: 0; }
+    .list-item { margin: 5px 0; font-weight: 500; }
+    #wall, #log { display: none; margin: 20px auto; padding: 15px; border-radius: 12px; background: #fdf2f2; border: 1px solid #f5c2c2; max-width: 500px; }
+    #comments { max-width: 600px; margin: 30px auto; text-align: left; background: #f9f9ff; padding: 20px; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    #comments h2 { margin-top: 0; }
+    #commentInput { width: 70%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
+    .comment { margin-bottom: 12px; padding: 10px; border-left: 4px solid #8b0000; background: #fff; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Anti Anti-Gooners</h1>
+  </header>
+  <main>
+    <p>On this site, we celebrate gooning as more than just a pastime — it’s a lifestyle, a mindset, and a vibe. The so-called “anti-gooners” don’t get it: they see obsession, we see dedication; they see wasted hours, we see transcendent focus. To goon is to lean fully into pleasure, to embrace the absurd intensity of the moment, and to laugh at anyone too uptight to understand. Being pro-goon isn’t just about the act itself — it’s about choosing joy, silliness, and unapologetic self-indulgence in a world that constantly tells you to tone it down.</p>
+
+    <button onclick="signUp()">Sign Up</button>
+    <div id="signup-list"></div>
+
+    <button onclick="toggleWall()">Gooners Wall of Shame</button>
+    <div id="wall">No one to be shamed yet</div>
+
+    <button onclick="toggleLog()">The Gooners Log</button>
+    <div id="log">Version 2.00 released on firewall</div>
+
+    <div id="comments">
+      <h2>Comments</h2>
+      <input type="text" id="commentInput" placeholder="Leave a comment...">
+      <button onclick="postComment()">Post</button>
+      <div id="commentList"></div>
+    </div>
+  </main>
+</body>
+</html>
