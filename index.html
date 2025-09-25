@@ -4,72 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anti Anti-Gooners</title>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import confetti from "https://cdn.skypack.dev/canvas-confetti";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCkUseB306TS1rllpinIKwcdFW6IyDJ2Zc",
-  authDomain: "antiantigoonerssociety.firebaseapp.com",
-  databaseURL: "https://antiantigoonerssociety-default-rtdb.firebaseio.com",
-  projectId: "antiantigoonerssociety",
-  storageBucket: "antiantigoonerssociety.firebasestorage.app",
-  messagingSenderId: "749386187473",
-  appId: "1:749386187473:web:07b36a0d50550dc3913bf0",
-  measurementId: "G-D1E7ZV4VBX"
-};
-
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const db = getDatabase(app);
-
-window.signUp = function () {
-  const name = prompt("Enter your name:");
-  if (name) {
-    push(ref(db, "signups"), { name });
-    confetti();
-  }
-}
-
-onValue(ref(db, "signups"), snapshot => {
-  const listDiv = document.getElementById("signup-list");
-  listDiv.innerHTML = "<h3>Signed Up:</h3>";
-  snapshot.forEach(child => {
-    const data = child.val();
-    listDiv.innerHTML += `<div class='list-item'>• ${data.name}</div>`;
-  });
-});
-
-window.toggleWall = function () {
-  const wall = document.getElementById("wall");
-  wall.style.display = wall.style.display === "block" ? "none" : "block";
-}
-
-window.toggleLog = function () {
-  const log = document.getElementById("log");
-  log.style.display = log.style.display === "block" ? "none" : "block";
-}
-
-window.postComment = function () {
-  const input = document.getElementById("commentInput");
-  const text = input.value.trim();
-  if (text) {
-    push(ref(db, "comments"), { text });
-    input.value = "";
-  }
-}
-
-onValue(ref(db, "comments"), snapshot => {
-  const list = document.getElementById("commentList");
-  list.innerHTML = "";
-  snapshot.forEach(child => {
-    const c = child.val();
-    list.innerHTML += `<div class='comment'>${c.text}</div>`;
-  });
-});
-</script>
 <style>
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #ffdde1, #ee9ca7); margin: 0; padding: 0; color: #333; }
 header { background: #8b0000; color: white; padding: 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
@@ -78,21 +12,12 @@ main { max-width: 900px; margin: 20px auto; padding: 20px; background: white; bo
 p { font-size: 1.2em; line-height: 1.6; margin-bottom: 20px; }
 button { margin: 10px; padding: 12px 24px; border: none; border-radius: 12px; background: #8b0000; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
 button:hover { background: #b22222; transform: scale(1.05); }
-#signup-list { margin: 20px auto; padding: 15px; background: #fafafa; border-radius: 12px; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); text-align: left; }
-#signup-list h3 { margin-top: 0; }
+#signup-list, #comments, #history-box { margin: 20px auto; padding: 20px; background: #fafafa; border-radius: 16px; box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
 .list-item { margin: 5px 0; font-weight: 500; }
-#wall, #log { display: none; margin: 20px auto; padding: 15px; border-radius: 12px; background: #fdf2f2; border: 1px solid #f5c2c2; max-width: 500px; }
-#video-section, #video-to-goon { display: flex; overflow-x: auto; gap: 15px; margin: 20px 0; padding-bottom: 10px; }
-#video-section iframe, #video-to-goon iframe { border-radius: 12px; flex-shrink: 0; width: 250px; height: 450px; }
-#video-to-goon iframe { width: 560px; height: 315px; }
-#video-section-title, #video-to-goon-title { font-size: 1.5em; margin-top: 30px; margin-bottom: 10px; font-weight: bold; }
-#comments { max-width: 600px; margin: 30px auto; text-align: left; background: #f9f9ff; padding: 20px; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-#comments h2 { margin-top: 0; }
-#commentInput { width: 70%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
-.comment { margin-bottom: 12px; padding: 10px; border-left: 4px solid #8b0000; background: #fff; border-radius: 8px; }
-#history-box { max-width: 900px; margin: 40px auto; padding: 30px; background: white; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-#history-box h2 { margin-top: 0; color: #8b0000; }
-#history-box p { font-size: 1.1em; line-height: 1.7; margin-bottom: 16px; }
+.comment { margin-bottom: 15px; padding: 12px; border-left: 4px solid #8b0000; background: #fff; border-radius: 8px; }
+.reply { margin-left: 25px; font-size: 0.9em; background: #f1f1f9; border-left: 3px solid #555; padding: 8px; border-radius: 6px; margin-top: 8px; }
+.comment img { max-width: 200px; display: block; margin-top: 8px; border-radius: 8px; }
+#commentInput, #imageInput { margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -100,59 +25,130 @@ button:hover { background: #b22222; transform: scale(1.05); }
 <h1>Anti Anti-Gooners</h1>
 </header>
 <main>
-<p>On this site, we celebrate gooning as more than just a pastime — it’s a lifestyle, a mindset, and a vibe. The so-called “anti-gooners” don’t get it: they see obsession, we see dedication; they see wasted hours, we see transcendent focus. To goon is to lean fully into pleasure, to embrace the absurd intensity of the moment, and to laugh at anyone too uptight to understand. Being pro-goon isn’t just about the act itself — it’s about choosing joy, silliness, and unapologetic self-indulgence in a world that constantly tells you to tone it down.</p>
+<p>On this site, we celebrate gooning as more than just a pastime — it’s a lifestyle, a mindset, and a vibe.</p>
 
+<!-- Signup Section -->
 <button onclick="signUp()">Sign Up</button>
-<div id="signup-list"></div>
+<div id="signup-list"><h3>Signed Up:</h3></div>
 
-<button onclick="toggleWall()">Gooners Wall of Shame</button>
-<div id="wall">dev as firewall doesnt work xd</div>
-
-<button onclick="toggleLog()">The Gooners Log</button>
-<div id="log">Version 2.00 released on firewall</div>
-<div id="log">Version 2.1 added videos to goon to</div>
-
-<div id="video-section-title">Historic Gooners</div>
-<div id="video-section">
-  <iframe src="https://www.youtube.com/embed/-257tRyW8IY" frameborder="0" allowfullscreen></iframe>
-  <iframe src="https://www.youtube.com/embed/im3cAHjy_ms" frameborder="0" allowfullscreen></iframe>
-  <iframe src="https://www.youtube.com/embed/28aqWXy_fbE" frameborder="0" allowfullscreen></iframe>
-  <iframe src="https://www.youtube.com/embed/WfMhxSErN4I" frameborder="0" allowfullscreen></iframe>
-  <iframe src="https://www.youtube.com/embed/CDRN9HF0TB8" frameborder="0" allowfullscreen></iframe>
-  <iframe src="https://www.youtube.com/embed/p9iJTHzzAdo" frameborder="0" allowfullscreen></iframe>
-</div>
-<h3>watch every video at once for peak gooning experence</h3>
-
-<div id="video-to-goon-title">Videos to Goon To</div>
-<div id="video-to-goon">
-  <iframe src="https://www.youtube.com/embed/1mtJvsfAtF0?start=97" frameborder="0" allowfullscreen></iframe>
-  <iframe src="https://www.youtube.com/embed/yyKjfYI1m4I" frameborder="0" allowfullscreen></iframe>
-</div>
-
+<!-- Comments Section -->
 <div id="comments">
-<h2>Comments</h2>
-<input type="text" id="commentInput" placeholder="Leave a comment...">
-<button onclick="postComment()">Post</button>
-<div id="commentList"></div>
+  <h2>Comments</h2>
+  <input type="text" id="commentInput" placeholder="Leave a comment...">
+  <input type="file" id="imageInput" accept="image/*">
+  <button onclick="postComment()">Post</button>
+  <div id="commentList"></div>
 </div>
 
-<!-- New History Section -->
+<!-- History Section -->
 <div id="history-box">
   <h2>The History of Gooning</h2>
-  <p>
-    The history of gooning stretches back as far as recorded human culture. In ancient times, gooning was often treated with a mix of fascination and taboo. Early societies documented it in myths, rituals, and even art, framing it as both a source of personal pleasure and spiritual energy.
-  </p>
-  <p>
-    In the Middle Ages, attitudes toward gooning shifted dramatically. Religious authorities often condemned it, associating the act with sin and weakness. Despite this, people continued to goon privately, proving that human desire for indulgence has always outlasted rules and restrictions.
-  </p>
-  <p>
-    The Enlightenment and modern science brought new perspectives. Medical writers attempted to pathologize gooning, labeling it harmful, while social reformers warned it would drain vitality. Yet these fears were largely exaggerated. By the 20th century, with the rise of psychology and sexual liberation movements, gooning became understood more as a natural and even healthy expression of human sexuality.
-  </p>
-  <p>
-    Today, gooning is celebrated in digital communities not only as an act of pleasure but as a lifestyle and mindset. From being shamed and hidden to becoming a form of joyful self-expression, the journey of gooning mirrors society’s evolving relationship with desire, freedom, and the body.
-  </p>
+  <p>The history of gooning stretches back as far as recorded human culture... (essay text here).</p>
 </div>
 </main>
+
+<script>
+let firstComment = true;
+
+// Load saved data
+let signups = JSON.parse(localStorage.getItem("signups")) || [];
+let comments = JSON.parse(localStorage.getItem("comments")) || [];
+
+function saveData() {
+  localStorage.setItem("signups", JSON.stringify(signups));
+  localStorage.setItem("comments", JSON.stringify(comments));
+}
+
+function renderSignups() {
+  const listDiv = document.getElementById("signup-list");
+  listDiv.innerHTML = "<h3>Signed Up:</h3>";
+  if (signups.length === 0) {
+    listDiv.innerHTML += "<p>No one has signed up yet.</p>";
+  } else {
+    signups.forEach(name => {
+      listDiv.innerHTML += `<div class='list-item'>• ${name}</div>`;
+    });
+  }
+}
+
+function renderComments() {
+  const list = document.getElementById("commentList");
+  list.innerHTML = "";
+  if (comments.length === 0) {
+    list.innerHTML = "<p>No comments yet. Be the first!</p>";
+    return;
+  }
+  comments.forEach((c, i) => {
+    let html = `<div class='comment'><strong>${c.name}</strong>: ${c.text}`;
+    if (c.image) {
+      html += `<img src="${c.image}">`;
+    }
+    html += `<div><button onclick="replyTo(${i})">Reply</button></div>`;
+
+    if (c.replies) {
+      c.replies.forEach(r => {
+        html += `<div class='reply'><strong>${r.name}</strong>: ${r.text}</div>`;
+      });
+    }
+    html += `</div>`;
+    list.innerHTML += html;
+  });
+}
+
+function signUp() {
+  const name = prompt("Enter your name:");
+  if (name) {
+    signups.push(name);
+    saveData();
+    renderSignups(); // show immediately
+  }
+}
+
+function postComment() {
+  const input = document.getElementById("commentInput");
+  const imgInput = document.getElementById("imageInput");
+  const text = input.value.trim();
+  if (!text && !imgInput.files[0]) return;
+
+  if (firstComment) {
+    alert("⚠️ Sending inappropriate images is not accepted.");
+    firstComment = false;
+  }
+
+  const comment = { name: "Anonymous", text, replies: [] };
+
+  if (imgInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      comment.image = e.target.result;
+      comments.push(comment);
+      saveData();
+      renderComments(); // show immediately
+    };
+    reader.readAsDataURL(imgInput.files[0]);
+  } else {
+    comments.push(comment);
+    saveData();
+    renderComments(); // show immediately
+  }
+
+  input.value = "";
+  imgInput.value = "";
+}
+
+function replyTo(index) {
+  const replyText = prompt("Enter your reply:");
+  if (replyText) {
+    comments[index].replies.push({ name: "Anonymous", text: replyText });
+    saveData();
+    renderComments(); // show immediately
+  }
+}
+
+// Render on load
+renderSignups();
+renderComments();
+</script>
 </body>
 </html>
 
