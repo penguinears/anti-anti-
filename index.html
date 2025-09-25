@@ -18,6 +18,12 @@ button:hover { background: #b22222; transform: scale(1.05); }
 .reply { margin-left: 25px; font-size: 0.9em; background: #f1f1f9; border-left: 3px solid #555; padding: 8px; border-radius: 6px; margin-top: 8px; }
 .comment img { max-width: 200px; display: block; margin-top: 8px; border-radius: 8px; }
 #commentInput, #imageInput { margin-top: 10px; }
+#video-section, #video-to-goon { display: flex; overflow-x: auto; gap: 15px; margin: 20px 0; padding-bottom: 10px; }
+#video-section iframe, #video-to-goon iframe { border-radius: 12px; flex-shrink: 0; width: 250px; height: 450px; }
+#video-to-goon iframe { width: 560px; height: 315px; }
+#video-section-title, #video-to-goon-title { font-size: 1.5em; margin-top: 30px; margin-bottom: 10px; font-weight: bold; }
+#history-box h2 { margin-top: 0; color: #8b0000; }
+#history-box p { font-size: 1.1em; line-height: 1.7; margin-bottom: 16px; }
 </style>
 </head>
 <body>
@@ -25,11 +31,37 @@ button:hover { background: #b22222; transform: scale(1.05); }
 <h1>Anti Anti-Gooners</h1>
 </header>
 <main>
-<p>On this site, we celebrate gooning as more than just a pastime — it’s a lifestyle, a mindset, and a vibe.</p>
+<p>On this site, we celebrate gooning as more than just a pastime — it’s a lifestyle, a mindset, and a vibe. The so-called “anti-gooners” don’t get it: they see obsession, we see dedication; they see wasted hours, we see transcendent focus. To goon is to lean fully into pleasure, to embrace the absurd intensity of the moment, and to laugh at anyone too uptight to understand. Being pro-goon isn’t just about the act itself — it’s about choosing joy, silliness, and unapologetic self-indulgence in a world that constantly tells you to tone it down.</p>
 
 <!-- Signup Section -->
 <button onclick="signUp()">Sign Up</button>
 <div id="signup-list"><h3>Signed Up:</h3></div>
+
+<!-- Log Section -->
+<button onclick="toggleLog()">The Gooners Log</button>
+<div id="log" style="display:none;">
+  <p>Version 2.00 released</p>
+  <p>Version 2.1 added videos to goon to</p>
+  <p>Version 2.2 added History of Gooning section</p>
+</div>
+
+<!-- Video Sections -->
+<div id="video-section-title">Historic Gooners</div>
+<div id="video-section">
+  <iframe src="https://www.youtube.com/embed/-257tRyW8IY" frameborder="0" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/im3cAHjy_ms" frameborder="0" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/28aqWXy_fbE" frameborder="0" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/WfMhxSErN4I" frameborder="0" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/CDRN9HF0TB8" frameborder="0" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/p9iJTHzzAdo" frameborder="0" allowfullscreen></iframe>
+</div>
+<h3>watch every video at once for peak gooning experence</h3>
+
+<div id="video-to-goon-title">Videos to Goon To</div>
+<div id="video-to-goon">
+  <iframe src="https://www.youtube.com/embed/1mtJvsfAtF0?start=97" frameborder="0" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/yyKjfYI1m4I" frameborder="0" allowfullscreen></iframe>
+</div>
 
 <!-- Comments Section -->
 <div id="comments">
@@ -43,14 +75,23 @@ button:hover { background: #b22222; transform: scale(1.05); }
 <!-- History Section -->
 <div id="history-box">
   <h2>The History of Gooning</h2>
-  <p>The history of gooning stretches back as far as recorded human culture... (essay text here).</p>
+  <p>
+    The history of gooning stretches back as far as recorded human culture. In ancient times, gooning was often treated with a mix of fascination and taboo. Early societies documented it in myths, rituals, and even art, framing it as both a source of personal pleasure and spiritual energy.
+  </p>
+  <p>
+    In the Middle Ages, attitudes toward gooning shifted dramatically. Religious authorities often condemned it, associating the act with sin and weakness. Despite this, people continued to goon privately, proving that human desire for indulgence has always outlasted rules and restrictions.
+  </p>
+  <p>
+    The Enlightenment and modern science brought new perspectives. Medical writers attempted to pathologize gooning, labeling it harmful, while social reformers warned it would drain vitality. Yet these fears were largely exaggerated. By the 20th century, with the rise of psychology and sexual liberation movements, gooning became understood more as a natural and even healthy expression of human sexuality.
+  </p>
+  <p>
+    Today, gooning is celebrated in digital communities not only as an act of pleasure but as a lifestyle and mindset. From being shamed and hidden to becoming a form of joyful self-expression, the journey of gooning mirrors society’s evolving relationship with desire, freedom, and the body.
+  </p>
 </div>
 </main>
 
 <script>
 let firstComment = true;
-
-// Load saved data
 let signups = JSON.parse(localStorage.getItem("signups")) || [];
 let comments = JSON.parse(localStorage.getItem("comments")) || [];
 
@@ -84,7 +125,6 @@ function renderComments() {
       html += `<img src="${c.image}">`;
     }
     html += `<div><button onclick="replyTo(${i})">Reply</button></div>`;
-
     if (c.replies) {
       c.replies.forEach(r => {
         html += `<div class='reply'><strong>${r.name}</strong>: ${r.text}</div>`;
@@ -100,7 +140,7 @@ function signUp() {
   if (name) {
     signups.push(name);
     saveData();
-    renderSignups(); // show immediately
+    renderSignups();
   }
 }
 
@@ -123,13 +163,13 @@ function postComment() {
       comment.image = e.target.result;
       comments.push(comment);
       saveData();
-      renderComments(); // show immediately
+      renderComments();
     };
     reader.readAsDataURL(imgInput.files[0]);
   } else {
     comments.push(comment);
     saveData();
-    renderComments(); // show immediately
+    renderComments();
   }
 
   input.value = "";
@@ -141,15 +181,22 @@ function replyTo(index) {
   if (replyText) {
     comments[index].replies.push({ name: "Anonymous", text: replyText });
     saveData();
-    renderComments(); // show immediately
+    renderComments();
   }
 }
 
-// Render on load
+function toggleLog() {
+  const log = document.getElementById("log");
+  log.style.display = log.style.display === "block" ? "none" : "block";
+}
+
+// initial render
 renderSignups();
 renderComments();
 </script>
 </body>
 </html>
+
+
 
 
